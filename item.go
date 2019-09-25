@@ -13,6 +13,6 @@ type ItemRender interface {
 	Nexts()[]ItemRender
 	Describe()string
 	render()string
-	SedDiagram(DiagramRender)
+	SetDiagram(DiagramRender)
 }
 

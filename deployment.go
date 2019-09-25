@@ -31,8 +31,8 @@ type DeployItem struct {
 	name  string
 	describe string
 	itype  DeployItemType
-	next []*DeployItem
-	Member []*DeployItem
+	next map[string]*DeployItem
+	member map[string]*DeployItem
 	diagram DiagramRender
 }
 
@@ -42,6 +42,8 @@ func NewItem(itype DeployItemType,name string)*DeployItem{
 	d := &DeployItem{
 		itype: itype,
 		name: name,
+		next: make(map[string]*DeployItem),
+		member: make(map[string]*DeployItem),
 	}
 	return d
 }
@@ -61,17 +63,17 @@ func (i *DeployItem)Name()string{
 
 
 func (i *DeployItem)Members()[]ItemRender{
-	items := make([]ItemRender,len(i.Member))
-	for index, member := range i.Member{
-				items[index] = member
+	items := make([]ItemRender,0)
+	for _, member := range i.member{
+		items = append(items,member)
 	}
 	return items
 }
 
 func (i *DeployItem)Nexts()[]ItemRender{
-	items := make([]ItemRender,len(i.next))
-	for index, next := range i.next{
-		items[index] = next
+	items := make([]ItemRender,0)
+	for _, next := range i.next{
+		items = append(items,next)
 	}
 	return items
 }
@@ -99,9 +101,9 @@ func (i *DeployItem)render()string{
 	return r
 }
 
-func (i *DeployItem)SedDiagram(d DiagramRender){
-	for _,v := range i.Member{
-		v.SedDiagram(d)
+func (i *DeployItem)SetDiagram(d DiagramRender){
+	for _,v := range i.member{
+		v.SetDiagram(d)
 	}
 	i.diagram = d
 }
@@ -110,16 +112,20 @@ func (i *DeployItem)SetDescribe(describe string){
 	i.describe = describe
 }
 
-func (i *DeployItem)ConnectTo(item ...*DeployItem){
-	if item == nil{
+func (i *DeployItem)ConnectTo(items ...*DeployItem){
+	if items == nil{
 		return
 	}
-	i.next = append(i.next,item...)
+	for _,item := range items{
+		i.next[item.name] = item
+	}
 }
 
-func (i *DeployItem)AddMember(item ...*DeployItem){
-	if item == nil{
+func (i *DeployItem)AddMember(items ...*DeployItem){
+	if items == nil{
 		return
 	}
-	i.Member = append(i.Member,item...)
+	for _,item := range items{
+		i.member[item.name] = item
+	}
 }

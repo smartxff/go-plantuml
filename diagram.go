@@ -35,7 +35,7 @@ func (d *Diagram)Render()string{
 	}
 
 	for _,member := range d.members{
-		member.SedDiagram(d)
+		member.SetDiagram(d)
 		r += member.render()
 	}
 
